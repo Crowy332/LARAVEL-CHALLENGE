@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\CompanieController;
+use App\Http\Controllers\EmployeeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +18,35 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('/login');
 });
+
+Route::get('/', function () {
+    return view('dashboard');
+
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::controller(Controller::class)->group(function () {
+        Route::get('/company', 'ViewCompanyPage')->name('company');
+        Route::get('/employee', 'ViewEmployeePage')->name('employee');
+    });
+    Route::controller(CompanieController::class)->group(function () {
+        Route::post('/add_companie', 'store');
+        Route::post('/edit_companie', 'edit');
+        Route::post('/update_companie', 'update');
+        Route::post('/delete_companie', 'destroy');
+    });
+
+    Route::controller(EmployeeController::class)->group(function () {
+        Route::post('/add_employee', 'store');
+        Route::post('/edit_employee', 'edit');
+        Route::post('/update_employee', 'update');
+        Route::post('/delete_employee', 'destroy');
+    });
+});
+
+require __DIR__.'/auth.php';
