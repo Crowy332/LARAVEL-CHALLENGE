@@ -30,6 +30,9 @@
                 <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
                 <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
             </label>
+            <div id = "text_password" class = "fs-6 text-danger" style = "display:none">
+                If you not admin Password is your name.
+            </div>
         </div>
 
         <div class="flex items-center justify-end mt-4">
@@ -44,4 +47,9 @@
             </x-primary-button>
         </div>
     </form>
+    <script>
+        $("#email").focusout(function() {
+            $(this).val() == "admin@admin.com" ? $("#text_password").hide() : $("#text_password").show();
+        })
+    </script>
 </x-guest-layout>

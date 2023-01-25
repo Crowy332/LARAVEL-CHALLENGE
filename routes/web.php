@@ -22,8 +22,7 @@ Route::get('/', function () {
 });
 
 Route::get('/', function () {
-    return view('dashboard');
-
+    return Controller::ViewCompanyPage();
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

@@ -19,8 +19,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedBigInteger('emp_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('emp_id')->references('id')->on('employees')->onDelete('cascade');
         });
     }
 

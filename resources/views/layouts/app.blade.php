@@ -19,6 +19,17 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="{{URL::asset('js/init.js')}}"></script>
+        <style>
+            #loader {
+                position: fixed;
+                left: 0px;
+                top: 0px;
+                width: 100%;
+                height: 100%;
+                z-index: 9999;
+                background: url('Loading_icon.gif') 50% 50% no-repeat rgb(249,249,249);
+            }
+        </style>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -35,6 +46,7 @@
 
             <!-- Page Content -->
             <main>
+                <div id="loader" style="display:none"></div>
                 {{ $slot }}
             </main>
         </div>

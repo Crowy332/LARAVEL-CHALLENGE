@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\Employee;
+use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
@@ -40,16 +43,26 @@ class EmployeeController extends Controller
             'first_name' => ['required' , 'string' , 'max:50'],
             'last_name' => ['required' , 'string' , 'max:100'],
             'company' => ["nullable"],
-            'email' => ['email',"nullable"],
+            'email' => ['email',"nullable",'unique:employees,email'],
             'phone' => ['max:15' , "nullable"],
         ]);
-        Employee::create([
+        $emp = Employee::create([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
             'company' => $request->input('company'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
         ]);
+
+        if($request->input('email')){
+            $user = User::create([
+                'name' => $request->input('first_name'),
+                'email' => $request->email,
+                'emp_id' => $emp->id,
+                'password' => Hash::make($request->input('first_name')),
+            ]);
+        }
+
     }
 
     /**
@@ -83,13 +96,25 @@ class EmployeeController extends Controller
      */
     public function update(Request $request)
     {
+
+
         $request -> validate([
             'first_name' => ['required' , 'string' , 'max:50'],
             'last_name' => ['required' , 'string' , 'max:100'],
             'company' => ["nullable"],
-            'email' => ['email',"nullable"],
+            'email' => ['email',"nullable",Rule::unique('employees')->ignore($request->input('id'))],
             'phone' => ['max:15' , "nullable"],
         ]);
+        if($request->input('email')){
+            $user = User::where('emp_id' , '=' ,$request->input('id'))->update([
+                'name' => $request->input('first_name'),
+                'email' => $request->email,
+                'password' => Hash::make($request->input('first_name')),
+            ]);
+        }
+        else{
+            User::where('email' , '=' ,$request->input('email'))->delete();
+        }
         Employee::find($request->input('id'))->update([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
@@ -97,6 +122,7 @@ class EmployeeController extends Controller
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
         ]);
+
     }
 
     /**

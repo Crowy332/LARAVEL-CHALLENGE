@@ -1,11 +1,12 @@
-$("#add_companie_btn").on("click" , function(){
+$("#add_companie_btn").unbind('click').bind("click" , function(){
     $("#add_companie_modal").modal("show");
     $(".modal-title").html('Add Company Data');
     $(".company_btn").hide();
     $("#add_companie").show();
 })
-$("#add_companie").on("click" , function(){
+$("#add_companie").unbind('click').bind("click" , function(){
     var formData = new FormData();
+    $("#loader").show();
     formData.append('name',$("#com_name").val());
     formData.append('address',$("#com_address").val());
     formData.append('email',$("#com_email").val());
@@ -18,7 +19,6 @@ $("#add_companie").on("click" , function(){
         processData: false,
         contentType: false,
         error: function (request, status, error) {
-            console.log("error")
             text_error = "";
             array = JSON.parse(request['responseText'])['errors'];
             jQuery.each( array, function( key , val ) {
@@ -35,18 +35,19 @@ $("#add_companie").on("click" , function(){
 
         }
     }).done(function(data) {
+        $("#loader").hide();
         Swal.fire({
             icon: 'success',
             title: 'Save Data success',
             confirmButtonText: 'Continue',
           }).then((result) => {
             if (result.isConfirmed) {
-
+                $("#add_companie_modal").modal("hide");
             }
           })
     })
 })
-$('.edit_btn').on("click" , function(){
+$('.edit_btn').unbind('click').bind("click" , function(){
     id = $(this).data('id');
     $.ajax({
         url: '/edit_companie',
@@ -61,7 +62,6 @@ $('.edit_btn').on("click" , function(){
         $("#com_name").val(data['name']);
         $("#com_address").val(data['address']);
         $("#com_email").val(data['email']);
-        console.log(data['logo'])
         if(data['logo']){
             $("#remove_logo").show();
             $("#logo_btn_text").text("Change Logo");
@@ -71,7 +71,7 @@ $('.edit_btn').on("click" , function(){
         $("#com_website").val(data['website']);
     })
 })
-$("#edit_companie").on("click" , function(){
+$("#edit_companie").unbind('click').bind("click" , function(){
     var formData = new FormData();
     formData.append('id',$("#companie_id").val());
     formData.append('check',$("#check_logo").val());
@@ -87,7 +87,6 @@ $("#edit_companie").on("click" , function(){
         processData: false,
         contentType: false,
         error: function (request, status, error) {
-            console.log("error")
             text_error = "";
             array = JSON.parse(request['responseText'])['errors'];
             jQuery.each( array, function( key , val ) {
@@ -115,13 +114,12 @@ $("#edit_companie").on("click" , function(){
         })
     })
 })
-$('.delete_btn').on("click" , function(){
+$('.delete_btn').unbind('click').bind("click" , function(){
     $.ajax({
         url: '/delete_companie',
         type: "POST",
         data: {id : $(this).data('id')},
     }).done(function(data) {
-        console.log(data)
         Swal.fire({
             title: 'Delete Data Success',
             html: 'I will reloade page in <b></b> milliseconds.',
@@ -147,7 +145,7 @@ $('.delete_btn').on("click" , function(){
 $('#add_companie_modal').on('hidden.bs.modal', function () {
     location.reload();
 })
-$("#com_logo").on('change',function(){
+$("#com_logo").unbind('click').bind('change',function(){
     const [file] = com_logo.files
     if (file) {
         logo_show.src = URL.createObjectURL(file)
@@ -159,7 +157,7 @@ $("#com_logo").on('change',function(){
         $("#clear_logo").show(500);
     }
 })
-$("#clear_logo").on('click', function(){
+$("#clear_logo").unbind('click').bind('click', function(){
     $("#com_logo").val('');
 
     $("#logo_btn_text").text("Add Logo");
@@ -173,7 +171,7 @@ $("#clear_logo").on('click', function(){
     }
     $('#check_logo').val(0);
 });
-$("#remove_logo").on('click', function(){
+$("#remove_logo").unbind('click').bind('click', function(){
     $("#com_logo").val('');
     $("#remove_logo").hide(300);
     $('#check_logo').val(2);
