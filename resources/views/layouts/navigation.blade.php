@@ -12,11 +12,6 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('company')">
                         {{ __('Companie') }}
                     </x-nav-link>
@@ -55,6 +50,13 @@
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
+
+                        @if (Auth::user()->name != "Admin")
+                        <a id = "edit_profile" data-id="{{Auth::user()->emp_id}}" style = "cursor: pointer;" class=" block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
+                            {{ __('Profile') }}
+                        </a>
+                        @endif
+
                     </x-slot>
                 </x-dropdown>
             </div>
@@ -101,6 +103,7 @@
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>
+
             </div>
         </div>
     </div>
@@ -128,7 +131,7 @@
                     </div>
                     <div class = "row my-3 col-sm-12">
                         <input type="hidden" id = "check_logo" value = "0">
-                        <input type="hidden" id = "no_logo" value = "{{ url('storage/No_file.png') }}">
+                        <input type="hidden" id = "no_logo" value = "{{ url('No_file.png') }}">
                         <input type="hidden" id = "base_logo" value = "">
                         <input type="hidden" id = "base_path" value = "{{ url('storage') }}">
                         <label class = "col-sm-3 fs-7 fw-bold mt-1 ps-3">Logo</label>
@@ -145,7 +148,7 @@
                                 </label>
                             </div>
                             <div class = "col-sm-7">
-                                <img id = "logo_show" class = "w-75 h-100" src="{{ url('storage/No_file.png') }}" alt="" title="" />
+                                <img id = "logo_show" class = "w-75 h-100" src="{{ url('No_file.png') }}" alt="" title="" />
                             </div>
 
                         </div>
@@ -218,4 +221,67 @@
             </div>
         </div>
     </div>
+    <script>
+        $('#edit_profile').on("click" , function(){
+            id = $(this).data('id');
+            $.ajax({
+                url: '/edit_employee',
+                type: "POST",
+                data: {id : id},
+            }).done(function(data) {
+            $("#add_employee_modal").modal("show");
+            $(".modal-title").html('Edit Employee Data');
+            $(".employee_btn").hide();
+            $("#edit_employee").show();
+            $("#employee_id").val(id)
+            $("#emp_fname").val(data['first_name']);
+            $("#emp_lname").val(data['last_name']);
+            $("#emp_company").val(data['company']).trigger("change");
+            $("#emp_email").val(data['email']);
+            $("#emp_phone").val(data['phone']);
+            })
+        })
+        $("#edit_employee").on("click" , function(){
+            var formData = new FormData();
+            formData.append('id',$("#employee_id").val());
+            formData.append('first_name',$("#emp_fname").val());
+            formData.append('last_name',$("#emp_lname").val());
+            formData.append('company',$("#emp_company").val());
+            formData.append('email',$("#emp_email").val());
+            formData.append('phone',$("#emp_phone").val());
+            $.ajax({
+                url: '/update_employee',
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                error: function (request, status, error) {
+                    text_error = "";
+                    array = JSON.parse(request['responseText'])['errors'];
+                    jQuery.each( array, function( key , val ) {
+                        jQuery.each( val, function( key , msg ) {
+                            text_error += msg +"<br>";
+                        });
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: "<p class = 'mx-auto'>"+text_error+"</p>"
+                    })
+
+                }
+            }).done(function(data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Update Data success',
+                    confirmButtonText: 'Continue',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                    }
+                })
+            })
+        })
+    </script>
 </nav>

@@ -21,7 +21,10 @@
                                         <th scope="col">Company</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Phone</th>
-                                        <th scope="col">Action</th>
+                                        @if (Auth::user()->name == "Admin")
+                                            <th scope="col">Action</th>
+                                        @endif
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -33,10 +36,13 @@
                                         <td>{{ $data->company }}</td>
                                         <td>{{ $data->email }}</td>
                                         <td>{{ $data->phone }}</td>
-                                        <td class = "d-flex justify-content-center gap-2">
-                                            <button class = "btn btn-warning edit_btn" data-id = "{{ $data->id }}"><i class="fa fa-pencil-square-o"></i></button>
-                                            <button class = "btn btn-danger delete_btn" data-id = "{{ $data->id }}"><i class="fa fa-trash-o"></i></button>
-                                        </td>
+                                        @if (Auth::user()->name == "Admin")
+                                            <td class = "d-flex justify-content-center gap-2">
+                                                <button class = "btn btn-warning edit_btn" data-id = "{{ $data->id }}"><i class="fa fa-pencil-square-o"></i></button>
+                                                <button class = "btn btn-danger delete_btn" data-id = "{{ $data->id }}"><i class="fa fa-trash-o"></i></button>
+                                            </td>
+                                        @endif
+
                                     </tr>
                                     @endforeach
                                 </tbody>

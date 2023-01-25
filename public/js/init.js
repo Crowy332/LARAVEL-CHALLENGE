@@ -8,5 +8,6 @@ $(document).ready(function () {
         placeholder: "Plase Select Companie",
         width: '100%',
         dropdownParent: $('#add_employee_modal')
-    });;
+    });
+
 });

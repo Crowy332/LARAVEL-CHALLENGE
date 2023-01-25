@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Companie;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class CompanieController extends Controller
 {
@@ -52,13 +53,17 @@ class CompanieController extends Controller
             $destinationPath = storage_path('app/public');
             $image = $request->file('logo')->move($destinationPath, $filename);
         }
-        Companie::create([
+        $Companie = Companie::create([
             'name' => $request->input('name'),
             'address' => $request->input('address'),
             'email' => $request->input('email'),
             'logo' => $filename  ? $filename : "",
             'website' => $request->input('website'),
         ]);
+        Mail::send('emails.email', $Companie->toArray(), function ($message) {
+            $message->to('admin@admin.com', 'Admin');
+            $message->subject('New Companie');
+        });
     }
 
     /**

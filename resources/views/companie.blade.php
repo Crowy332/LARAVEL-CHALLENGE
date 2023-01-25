@@ -21,7 +21,10 @@
                                         <th scope="col">Email</th>
                                         <th scope="col">Logo</th>
                                         <th scope="col">Website</th>
-                                        <th scope="col">Action</th>
+                                        @if (Auth::user()->name == "Admin")
+                                            <th scope="col">Action</th>
+                                        @endif
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -31,12 +34,19 @@
                                         <td>{{ $data->name }}</td>
                                         <td>{{ $data->address }}</td>
                                         <td>{{ $data->email }}</td>
-                                        <td>{{ $data->logo }}</td>
-                                        <td>{{ $data->website }}</td>
-                                        <td class = "d-flex justify-content-center gap-2">
-                                            <button class = "btn btn-warning edit_btn" data-id = "{{ $data->id }}"><i class="fa fa-pencil-square-o"></i></button>
-                                            <button class = "btn btn-danger delete_btn" data-id = "{{ $data->id }}"><i class="fa fa-trash-o"></i></button>
+                                        <td>{{ $data->logo }}
+                                            @if ($data->logo)
+                                                <a href = "{{ url('storage/'.$data->logo) }}" target="_blank"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+                                            @endif
                                         </td>
+                                        <td><a href = "{{ $data->website }}" target="_blank">{{ $data->website }}</a></td>
+                                        @if (Auth::user()->name == "Admin")
+                                            <td class = "d-flex justify-content-center gap-2">
+                                                <button class = "btn btn-warning edit_btn" data-id = "{{ $data->id }}"><i class="fa fa-pencil-square-o"></i></button>
+                                                <button class = "btn btn-danger delete_btn" data-id = "{{ $data->id }}"><i class="fa fa-trash-o"></i></button>
+                                            </td>
+                                        @endif
+
                                     </tr>
                                     @endforeach
                                 </tbody>
